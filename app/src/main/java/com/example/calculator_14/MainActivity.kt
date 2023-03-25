@@ -1,9 +1,13 @@
 package com.example.calculator_14
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import com.example.calculator_14.databinding.ActivityMainBinding
+import net.objecthunter.exp4j.ExpressionBuilder
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -11,8 +15,146 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        onNumberClicked()
+        onOperatorClicked()
     }
 
+    private fun onOperatorClicked() {
+
+        binding.btnJam.setOnClickListener {
+
+            if (binding.txtExpression.text.isNotEmpty()) {
+
+                val myChar = binding.txtExpression.text.last()
+                if (
+                    myChar != '+' &&
+                    myChar != '-' &&
+                    myChar != '*' &&
+                    myChar != '/'
+                ) {
+
+                    appendText("+")
+
+                }
+
+            }
+
+        }
+
+
+        binding.btnMenha.setOnClickListener {
+
+            if (binding.txtExpression.text.isNotEmpty()) {
+
+                val myChar = binding.txtExpression.text.last()
+                if (
+                    myChar != '+' &&
+                    myChar != '-' &&
+                    myChar != '*' &&
+                    myChar != '/'
+                ) {
+
+                    appendText("-")
+
+                }
+
+            }
+
+        }
+
+        binding.btnZarb.setOnClickListener {
+
+            if (binding.txtExpression.text.isNotEmpty()) {
+
+                val myChar = binding.txtExpression.text.last()
+                if (
+                    myChar != '+' &&
+                    myChar != '-' &&
+                    myChar != '*' &&
+                    myChar != '/'
+                ) {
+
+                    appendText("*")
+
+                }
+
+            }
+
+        }
+
+        binding.btnTaghsim.setOnClickListener {
+
+            if (binding.txtExpression.text.isNotEmpty()) {
+
+                val myChar = binding.txtExpression.text.last()
+                if (
+                    myChar != '+' &&
+                    myChar != '-' &&
+                    myChar != '*' &&
+                    myChar != '/'
+                ) {
+
+                    appendText("/")
+
+                }
+
+            }
+
+        }
+
+        binding.btnParantezBaz.setOnClickListener {
+            appendText("(")
+        }
+
+        binding.btnParantezBaste.setOnClickListener {
+            appendText(")")
+        }
+
+        binding.btnAC.setOnClickListener {
+
+            binding.txtExpression.text = ""
+            binding.txtJavab.text = ""
+
+        }
+
+        binding.btncheang.setOnClickListener {
+
+
+            val  intent = Intent(this , MainActivity2::class.java)
+            startActivity(intent)
+
+        }
+
+
+        binding.btnMosavi.setOnClickListener {
+
+            try {
+
+                val expression = ExpressionBuilder(binding.txtExpression.text.toString()).build()
+                val result = expression.evaluate()
+
+                val longResult = result.toLong()
+
+                // 135.0 == 135
+                if (result == longResult.toDouble()) {
+                    binding.txtJavab.text = longResult.toString()
+                } else {
+                    binding.txtJavab.text = result.toString()
+                }
+
+            } catch (e: Exception) {
+
+                binding.txtExpression.text = ""
+                binding.txtJavab.text = ""
+                Toast.makeText(this, "Error", Toast.LENGTH_LONG).show()
+
+            }
+
+        }
+
+
+    }
 
     private fun onNumberClicked() {
 
@@ -59,7 +201,30 @@ class MainActivity : AppCompatActivity() {
         binding.btn9.setOnClickListener {
             appendText("9")
         }
+
+
+
+        binding.btnDot.setOnClickListener {
+            if (binding.txtExpression.text.isEmpty() || binding.txtJavab.text.isNotEmpty()) appendText("0.")
+            else if (binding.txtExpression.text.last() != '.') {
+                var countOperators = 0
+                var countDots = 0
+                binding.txtExpression.text.forEach {
+                    if (it == '+' || it == '-' || it == '*' || it == '/') countOperators++
+                    if (it == '.') countDots++
+                }
+                if (countDots <= countOperators) appendText(".")
+            }
+        }
+
+
+
+
+
+
+
     }
+
     private fun appendText(newText: String) {
 
         if (binding.txtJavab.text.isNotEmpty()) {
@@ -80,8 +245,6 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
-
-
 
 
 }
